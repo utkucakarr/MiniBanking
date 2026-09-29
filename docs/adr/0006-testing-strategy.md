@@ -27,7 +27,7 @@ Handlers use the DbContext directly (ADR 0004), which rules out mocking the data
 ### Tools
 | Need | Choice | Reason |
 |---|---|---|
-| Framework | **xUnit v3** | Most widely used in modern .NET |
+| Framework | **xUnit v3** on Microsoft Testing Platform (`xunit.v3.mtp-v2`; `global.json` sets the MTP runner) | Most widely used in modern .NET |
 | Assertions | **AwesomeAssertions** (Apache 2.0) | Community fork of FluentAssertions 7. Same `.Should()` syntax found in industry codebases, without FluentAssertions 8's commercial license |
 | Database | **Testcontainers.PostgreSql** | Real PostgreSQL in Docker, same engine as production |
 | Database reset | **Respawn** | Fast table cleanup between tests without restarting the container |
@@ -43,6 +43,7 @@ Assertion libraries are a low-cost, reversible choice.
 ```
 tests/
   Modules/MiniBanking.<Module>.Tests   domain unit tests; access internals via InternalsVisibleTo
+  MiniBanking.SharedKernel.Tests       Money, Currency, Result
   MiniBanking.BuildingBlocks.Tests
   MiniBanking.IntegrationTests         one shared PostgreSQL container per test run
   MiniBanking.ArchitectureTests

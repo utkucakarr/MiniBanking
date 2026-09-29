@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure domain building blocks: no framework or package dependencies. -->
+</Project>

@@ -1,0 +1,10 @@
+<Project>
+  <!-- Applied automatically to every project below this folder. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Nullable warnings are real bugs waiting to happen: fail the build. -->
+    <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

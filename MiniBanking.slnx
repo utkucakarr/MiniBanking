@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Bootstrapper/MiniBanking.Api/MiniBanking.Api.csproj" />
+    <Project Path="src/BuildingBlocks/MiniBanking.BuildingBlocks/MiniBanking.BuildingBlocks.csproj" />
+    <Project Path="src/BuildingBlocks/MiniBanking.SharedKernel/MiniBanking.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MiniBanking.ArchitectureTests/MiniBanking.ArchitectureTests.csproj" />
+    <Project Path="tests/MiniBanking.BuildingBlocks.Tests/MiniBanking.BuildingBlocks.Tests.csproj" />
+    <Project Path="tests/MiniBanking.SharedKernel.Tests/MiniBanking.SharedKernel.Tests.csproj" />
+  </Folder>
+</Solution>
