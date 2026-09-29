@@ -1,0 +1,79 @@
+# ====================================================================
+# Exceptions (Keep docs folder tracked)
+# ====================================================================
+!docs/
+!**/docs/**
+
+# ====================================================================
+# .NET / C# Rules
+# ====================================================================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+appsettings.Development.json
+appsettings.Local.json
+
+# Test Results & Artifacts
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Publish Output
+[Pp]ublish/
+
+# ====================================================================
+# Node.js / React Rules
+# ====================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Production / Build artifacts
+build/
+dist/
+out/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite / Next.js / Cache
+.next/
+.cache/
+.vite/
+*.tsbuildinfo
+
+# ====================================================================
+# Personal Notes
+# ====================================================================
+note.md
+
+# ====================================================================
+# OS & General Metadata
+# ====================================================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ====================================================================
+# Claude Code (local only, never pushed)
+# ====================================================================
+CLAUDE.md
+CLAUDE.local.md
+.claude/
