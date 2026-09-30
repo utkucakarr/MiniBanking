@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- xUnit v3 test projects are executables (Microsoft Testing Platform). -->
@@ -12,10 +12,12 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="AwesomeAssertions" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="AwesomeAssertions" />
   </ItemGroup>
 
   <ItemGroup>
