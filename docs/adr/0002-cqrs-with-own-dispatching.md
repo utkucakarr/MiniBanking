@@ -41,10 +41,16 @@ Wiring:
 - Commands and queries are internal to their module. Other modules never send them; they use the
   module's `.Contracts` interfaces instead (ADR 0001).
 
-## Open points (decided in later ADRs)
-- The validation mechanism (FluentValidation vs hand-written validators), covered by the error-handling ADR.
-- The registration mechanism: Scrutor (MIT) for scanning and decorating, or manual registration.
-- The transaction decorator's exact behaviour, covered by the data-access ADR.
+## Resolved points
+- **Validation:** FluentValidation (ADR 0005). The validation decorator runs all `IValidator<TRequest>`s before
+  the handler. On failure it returns a `ValidationError`, which carries the failures per field, without calling the handler.
+  `ValidationError` derives from `Error`, so `Error` is not sealed.
+- **Registration:** **Scrutor** (MIT).
+  - Handlers are found by assembly scanning (`AddCqrs(assemblies)`), including `internal` ones, with a scoped lifetime.
+  - Decorators are applied with `TryDecorate`. The last decorator registered is the outermost, so validation
+    is registered first and logging last.
+  - .NET's built-in container cannot decorate open generics on its own.
+- **Transaction decorator:** added in Phase 1 together with the first module `DbContext` (ADR 0004).
 
 ## Consequences
 - No third-party mediator and no licensing risk.
