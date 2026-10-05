@@ -1,0 +1,14 @@
+# Requests you can send from Visual Studio: open this file and click "Send request" above a request.
+@baseUrl = http://localhost:5080
+
+### Health check
+GET {{baseUrl}}/health
+
+### Supported currencies
+GET {{baseUrl}}/api/v1/reference/currencies
+
+### Unknown route -> 404 ProblemDetails
+GET {{baseUrl}}/api/v1/does-not-exist
+
+### OpenAPI document (Development only)
+GET {{baseUrl}}/openapi/v1.json
