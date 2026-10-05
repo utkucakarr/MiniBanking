@@ -56,7 +56,7 @@ public class ModuleTests
         using var scope = provider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<ICommandHandler<OpenTestAccount, Guid>>();
 
-        // Logging → Validation → Handler: walk the decorator chain via each decorator's "inner" field.
+        // Logging → Validation → Transaction → Handler: walk the decorator chain via each decorator's "inner" field.
         var chain = new List<string>();
         object? current = handler;
         while (current is not null)
@@ -68,7 +68,8 @@ public class ModuleTests
                 ?.GetValue(current);
         }
 
-        chain.Should().Equal("LoggingDecorator", "ValidationDecorator", nameof(OpenTestAccountHandler));
+        chain.Should().Equal(
+            "LoggingDecorator", "ValidationDecorator", "TransactionDecorator", nameof(OpenTestAccountHandler));
     }
 
     [Fact]

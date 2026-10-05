@@ -1,0 +1,24 @@
+# Local development infrastructure. Start with: docker compose up -d --wait
+# Integration tests don't use this file: they start their own throwaway PostgreSQL (Testcontainers).
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: minibanking-postgres
+    environment:
+      POSTGRES_DB: minibanking
+      POSTGRES_USER: minibanking
+      POSTGRES_PASSWORD: minibanking # local development only, never a real secret
+    ports:
+      # Host port 5433, so it doesn't clash with a PostgreSQL installed directly on the machine (5432).
+      - "5433:5432"
+    volumes:
+      # PostgreSQL 18+ images keep their data under /var/lib/postgresql (not .../data).
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minibanking -d minibanking"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The public face of the Customers module: the ONLY project other modules may reference (ADR 0001).
+    Interfaces, DTOs and integration events are added here when another module first needs them.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\MiniBanking.SharedKernel\MiniBanking.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Everything inside the Customers module. Types are internal by default (ADR 0001). -->
+
+  <ItemGroup>
+    <!-- ASP.NET Core types for the module's endpoints. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\MiniBanking.BuildingBlocks\MiniBanking.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\MiniBanking.Customers.Contracts\MiniBanking.Customers.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
