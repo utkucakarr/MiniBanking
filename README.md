@@ -90,7 +90,7 @@ MiniBanking.slnx
 │   ├── Bootstrapper/MiniBanking.Api          # host
 │   ├── BuildingBlocks/
 │   │   ├── MiniBanking.SharedKernel          # Result, Error, Entity, AggregateRoot, Money, Currency
-│   │   └── MiniBanking.BuildingBlocks        # CQRS abstractions, decorators, DI registration
+│   │   └── MiniBanking.BuildingBlocks        # CQRS, decorators, ProblemDetails mapping, module system
 │   └── Modules/                              # business modules (from Phase 1)
 ├── tests/
 │   ├── MiniBanking.SharedKernel.Tests
@@ -123,7 +123,7 @@ dotnet test
   - [x] `Result` / `Error`, `Entity` / `AggregateRoot`, domain events
   - [x] `Money` / `Currency` value objects
   - [x] CQRS abstractions with logging and validation decorators
-  - [ ] ProblemDetails error mapping, global exception handler, module system
+  - [x] ProblemDetails error mapping, global exception handler, module system
   - [ ] API host (OpenAPI, health checks, logging)
   - [ ] Docker Compose, architecture tests, CI
 - [ ] **Phase 1 — Customers & Identity:** customer onboarding, KYC, JWT authentication
