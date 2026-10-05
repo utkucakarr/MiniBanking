@@ -12,7 +12,7 @@ The goal is a realistic, well-tested backend that covers the core concepts of a 
 
 Every significant technical decision is documented as an [Architecture Decision Record](docs/adr).
 
-> 🚧 **Status:** work in progress. Phase 0 (foundations) is being built. See the [roadmap](#roadmap).
+> 🚧 **Status:** work in progress. Phase 0 (foundations) is complete; Phase 1 (customers & identity) is next. See the [roadmap](#roadmap).
 
 ---
 
@@ -87,7 +87,7 @@ Endpoint → Logging decorator → Validation decorator → Handler → Domain (
 ```
 MiniBanking.slnx
 ├── src/
-│   ├── Bootstrapper/MiniBanking.Api          # host
+│   ├── Bootstrapper/MiniBanking.Api          # host: Program.cs, OpenAPI + Scalar, health check
 │   ├── BuildingBlocks/
 │   │   ├── MiniBanking.SharedKernel          # Result, Error, Entity, AggregateRoot, Money, Currency
 │   │   └── MiniBanking.BuildingBlocks        # CQRS, decorators, ProblemDetails mapping, module system
@@ -95,6 +95,7 @@ MiniBanking.slnx
 ├── tests/
 │   ├── MiniBanking.SharedKernel.Tests
 │   ├── MiniBanking.BuildingBlocks.Tests
+│   ├── MiniBanking.IntegrationTests          # real HTTP requests against the in-memory API
 │   └── MiniBanking.ArchitectureTests
 └── docs/adr/                                 # architecture decision records
 ```
@@ -112,21 +113,27 @@ cd MiniBanking
 
 dotnet build
 dotnet test
+
+dotnet run --project src/Bootstrapper/MiniBanking.Api
 ```
+
+Then open **http://localhost:5080/scalar** for the interactive API documentation, or
+**http://localhost:5080/health** for the health check.
 
 ---
 
 ## Roadmap
 
-- [ ] **Phase 0 — Foundations**
+- [x] **Phase 0 — Foundations**
   - [x] Solution skeleton, central package management, code style
   - [x] `Result` / `Error`, `Entity` / `AggregateRoot`, domain events
   - [x] `Money` / `Currency` value objects
   - [x] CQRS abstractions with logging and validation decorators
   - [x] ProblemDetails error mapping, global exception handler, module system
-  - [ ] API host (OpenAPI, health checks, logging)
-  - [ ] Docker Compose, architecture tests, CI
+  - [x] API host (OpenAPI + Scalar, health check, console logging, integration smoke tests)
 - [ ] **Phase 1 — Customers & Identity:** customer onboarding, KYC, JWT authentication
+  - First end-to-end slice (register a customer) brings PostgreSQL via Docker Compose, the first `DbContext`,
+    the transaction decorator and architecture tests; CI follows.
 - [ ] **Phase 2 — Accounts:** IBAN, account lifecycle, holds, available vs ledger balance
 - [ ] **Phase 3 — Ledger:** double-entry bookkeeping, chart of accounts
 - [ ] **Phase 4 — Payments:** deposits, withdrawals, transfers, idempotency, concurrency

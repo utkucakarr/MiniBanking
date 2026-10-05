@@ -7,6 +7,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/MiniBanking.ArchitectureTests/MiniBanking.ArchitectureTests.csproj" />
     <Project Path="tests/MiniBanking.BuildingBlocks.Tests/MiniBanking.BuildingBlocks.Tests.csproj" />
+    <Project Path="tests/MiniBanking.IntegrationTests/MiniBanking.IntegrationTests.csproj" />
     <Project Path="tests/MiniBanking.SharedKernel.Tests/MiniBanking.SharedKernel.Tests.csproj" />
   </Folder>
 </Solution>
