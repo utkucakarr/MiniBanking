@@ -4,7 +4,7 @@ namespace MiniBanking.SharedKernel.Results;
 /// An expected, named failure such as "Accounts.InsufficientFunds".
 /// <see cref="Code"/> is stable and machine-readable; <see cref="Message"/> is for developers.
 /// </summary>
-public sealed record Error(string Code, string Message, ErrorType Type)
+public record Error(string Code, string Message, ErrorType Type)
 {
     public static readonly Error None = new(string.Empty, string.Empty, ErrorType.None);
 
