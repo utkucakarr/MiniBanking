@@ -1,0 +1,54 @@
+# Continuous integration: build the solution and run every test (including the Testcontainers
+# integration tests) on a clean Linux machine for every push to main and every pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # adds a "Run workflow" button on GitHub
+
+# The workflow only reads the code; it never writes to the repository.
+permissions:
+  contents: read
+
+# A new push to the same pull request cancels the run that is still going (its result is outdated).
+# Runs on main are never cancelled: every commit there should get a result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true # no welcome banner in the logs
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest # Docker is preinstalled, so Testcontainers works
+    timeout-minutes: 15 # a normal run takes about a minute; never hang for hours
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v5
+
+      - name: Install the .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      # Reuse downloaded NuGet packages; the key changes whenever a package version changes.
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
