@@ -12,7 +12,7 @@ The goal is a realistic, well-tested backend that covers the core concepts of a 
 
 Every significant technical decision is documented as an [Architecture Decision Record](docs/adr).
 
-> 🚧 **Status:** work in progress. Phase 0 (foundations) is complete; Phase 1 (customers & identity) is next. See the [roadmap](#roadmap).
+> 🚧 **Status:** work in progress. Phase 0 (foundations) is complete; Phase 1 (customers & identity) is in progress. See the [roadmap](#roadmap).
 
 ---
 
@@ -42,7 +42,7 @@ One deployable ASP.NET Core host loads independent business modules. Each module
 Inside a module, every request flows through the same pipeline:
 
 ```
-Endpoint → Logging decorator → Validation decorator → Handler → Domain (aggregate) → Result
+Endpoint → Logging → Validation → Transaction (commands only) → Handler → Domain (aggregate) → Result
 ```
 
 ### Key design decisions
@@ -77,8 +77,8 @@ Endpoint → Logging decorator → Validation decorator → Handler → Domain (
 | Web | ASP.NET Core Minimal APIs, OpenAPI, Scalar |
 | Data | PostgreSQL, EF Core 10 (Npgsql) |
 | Application | Own CQRS handlers, FluentValidation, Scrutor (decorators) |
-| Testing | xUnit v3 (Microsoft Testing Platform), AwesomeAssertions, Testcontainers, NetArchTest |
-| Tooling | Central Package Management, `.editorconfig`, GitHub Actions |
+| Testing | xUnit v3 (Microsoft Testing Platform), AwesomeAssertions, Testcontainers, Respawn, NetArchTest |
+| Tooling | Central Package Management, `.editorconfig`, Docker Compose, GitHub Actions |
 
 ---
 
@@ -90,35 +90,61 @@ MiniBanking.slnx
 │   ├── Bootstrapper/MiniBanking.Api          # host: Program.cs, OpenAPI + Scalar, health check
 │   ├── BuildingBlocks/
 │   │   ├── MiniBanking.SharedKernel          # Result, Error, Entity, AggregateRoot, Money, Currency
-│   │   └── MiniBanking.BuildingBlocks        # CQRS, decorators, ProblemDetails mapping, module system
-│   └── Modules/                              # business modules (from Phase 1)
+│   │   └── MiniBanking.BuildingBlocks        # CQRS, decorators, transactions, persistence, ProblemDetails, modules
+│   └── Modules/
+│       └── Customers/
+│           ├── MiniBanking.Customers           # Domain/, Features/, Infrastructure/ (internal)
+│           └── MiniBanking.Customers.Contracts # the only part other modules may reference
 ├── tests/
+│   ├── Modules/MiniBanking.Customers.Tests   # domain unit tests (value objects, Customer aggregate)
 │   ├── MiniBanking.SharedKernel.Tests
 │   ├── MiniBanking.BuildingBlocks.Tests
-│   ├── MiniBanking.IntegrationTests          # real HTTP requests against the in-memory API
-│   └── MiniBanking.ArchitectureTests
-└── docs/adr/                                 # architecture decision records
+│   ├── MiniBanking.IntegrationTests          # HTTP → handler → real PostgreSQL (Testcontainers)
+│   └── MiniBanking.ArchitectureTests         # module boundaries, domain purity
+├── docs/adr/                                 # architecture decision records
+└── docker-compose.yml                        # local PostgreSQL
 ```
 
 ---
 
 ## Getting started
 
-**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
-Docker (PostgreSQL, integration tests) is needed from Phase 1.
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and Docker
+(local PostgreSQL; the integration tests start their own throwaway PostgreSQL with Testcontainers).
 
 ```bash
 git clone https://github.com/utkucakarr/MiniBanking.git
 cd MiniBanking
 
 dotnet build
-dotnet test
+dotnet test                 # needs Docker running
 
-dotnet run --project src/Bootstrapper/MiniBanking.Api
+docker compose up -d --wait # PostgreSQL on localhost:5433
+dotnet run --project src/Bootstrapper/MiniBanking.Api   # applies migrations on startup (Development)
+```
+
+To add a migration (`dotnet tool restore` installs `dotnet-ef` once):
+
+```bash
+dotnet ef migrations add <Name> --project src/Modules/Customers/MiniBanking.Customers \
+  --startup-project src/Bootstrapper/MiniBanking.Api --output-dir Infrastructure/Migrations
 ```
 
 Then open **http://localhost:5080/scalar** for the interactive API documentation, or
 **http://localhost:5080/health** for the health check.
+`src/Bootstrapper/MiniBanking.Api/MiniBanking.Api.http` has ready-made requests for Visual Studio / VS Code.
+
+### API
+
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/api/v1/customers` | Register a retail customer (TCKN checksum, 18+ rule, KYC starts as `Pending`) → `201` + `Location` |
+| `GET` | `/api/v1/customers/{id}` | Read a customer → `200` / `404` |
+| `GET` | `/api/v1/reference/currencies` | Supported currencies |
+| `GET` | `/health` | Health check |
+
+Errors are RFC 9457 ProblemDetails with a stable `code`, e.g. `Customers.NationalIdAlreadyRegistered` (409)
+or `Customers.Underage` (422).
 
 ---
 
@@ -132,8 +158,11 @@ Then open **http://localhost:5080/scalar** for the interactive API documentation
   - [x] ProblemDetails error mapping, global exception handler, module system
   - [x] API host (OpenAPI + Scalar, health check, console logging, integration smoke tests)
 - [ ] **Phase 1 — Customers & Identity:** customer onboarding, KYC, JWT authentication
-  - First end-to-end slice (register a customer) brings PostgreSQL via Docker Compose, the first `DbContext`,
-    the transaction decorator and architecture tests; CI follows.
+  - [x] Persistence foundation: PostgreSQL via Docker Compose, module `DbContext` with its own schema,
+    transaction decorator, Testcontainers + Respawn integration tests, architecture tests
+  - [x] Register a customer (first end-to-end slice): `Customer` aggregate, TCKN validation, `POST`/`GET` endpoints
+  - [ ] CI (GitHub Actions)
+  - [ ] KYC verification, Identity (JWT, refresh tokens)
 - [ ] **Phase 2 — Accounts:** IBAN, account lifecycle, holds, available vs ledger balance
 - [ ] **Phase 3 — Ledger:** double-entry bookkeeping, chart of accounts
 - [ ] **Phase 4 — Payments:** deposits, withdrawals, transfers, idempotency, concurrency

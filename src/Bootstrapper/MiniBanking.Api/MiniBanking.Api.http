@@ -12,3 +12,74 @@ GET {{baseUrl}}/api/v1/does-not-exist
 
 ### OpenAPI document (Development only)
 GET {{baseUrl}}/openapi/v1.json
+
+### ---------------------------------------------------------------------------
+### Customers (start the database first: docker compose up -d --wait)
+### ---------------------------------------------------------------------------
+
+### Register a customer -> 201 Created + Location
+# @name register
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+
+{
+  "firstName": "Ali",
+  "lastName": "Yılmaz",
+  "nationalId": "10000000146",
+  "dateOfBirth": "1990-05-20",
+  "email": "ali@example.com",
+  "phoneNumber": "+905321234567"
+}
+
+### Read the customer just registered (uses the id from the "register" response) -> 200
+GET {{baseUrl}}/api/v1/customers/{{register.response.body.$.id}}
+
+### Same national id again -> 409 Customers.NationalIdAlreadyRegistered
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+
+{
+  "firstName": "Ayşe",
+  "lastName": "Kaya",
+  "nationalId": "10000000146",
+  "dateOfBirth": "1985-03-10",
+  "email": "ayse@example.com",
+  "phoneNumber": "+905331112233"
+}
+
+### Missing fields -> 400 with an "errors" entry per field
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+
+{
+  "firstName": "Ali"
+}
+
+### Wrong TCKN checksum -> 400 Customers.InvalidNationalId
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+
+{
+  "firstName": "Can",
+  "lastName": "Demir",
+  "nationalId": "12345678901",
+  "dateOfBirth": "1990-05-20",
+  "email": "can@example.com",
+  "phoneNumber": "+905321234567"
+}
+
+### Under 18 -> 422 Customers.Underage
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+
+{
+  "firstName": "Deniz",
+  "lastName": "Ak",
+  "nationalId": "12345678950",
+  "dateOfBirth": "2015-01-01",
+  "email": "deniz@example.com",
+  "phoneNumber": "+905321234567"
+}
+
+### Unknown customer -> 404 Customers.NotFound
+GET {{baseUrl}}/api/v1/customers/01a10d01-0000-7000-8000-000000000000

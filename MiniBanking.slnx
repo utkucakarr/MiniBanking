@@ -4,10 +4,18 @@
     <Project Path="src/BuildingBlocks/MiniBanking.BuildingBlocks/MiniBanking.BuildingBlocks.csproj" />
     <Project Path="src/BuildingBlocks/MiniBanking.SharedKernel/MiniBanking.SharedKernel.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Customers/">
+    <Project Path="src/Modules/Customers/MiniBanking.Customers.Contracts/MiniBanking.Customers.Contracts.csproj" />
+    <Project Path="src/Modules/Customers/MiniBanking.Customers/MiniBanking.Customers.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MiniBanking.ArchitectureTests/MiniBanking.ArchitectureTests.csproj" />
     <Project Path="tests/MiniBanking.BuildingBlocks.Tests/MiniBanking.BuildingBlocks.Tests.csproj" />
     <Project Path="tests/MiniBanking.IntegrationTests/MiniBanking.IntegrationTests.csproj" />
     <Project Path="tests/MiniBanking.SharedKernel.Tests/MiniBanking.SharedKernel.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/">
+    <Project Path="tests/Modules/MiniBanking.Customers.Tests/MiniBanking.Customers.Tests.csproj" />
   </Folder>
 </Solution>

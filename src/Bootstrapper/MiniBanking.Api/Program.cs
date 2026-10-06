@@ -1,12 +1,14 @@
 using MiniBanking.BuildingBlocks.Errors;
 using MiniBanking.BuildingBlocks.Modules;
+using MiniBanking.BuildingBlocks.Persistence;
+using MiniBanking.Customers;
 using MiniBanking.SharedKernel.Monetary;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Business modules are plugged in here, starting with Customers in Phase 1.
-IModule[] modules = [];
+// Business modules are plugged in here.
+IModule[] modules = [new CustomersModule()];
 
 // ---------------------------------------------------------------------------
 // Services (dependency injection)
@@ -27,6 +29,9 @@ app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {
+    // Development only: production applies migrations as a separate deployment step (ADR 0004).
+    await app.Services.MigrateModuleDatabasesAsync();
+
     app.MapOpenApi();
     app.MapScalarApiReference();
 }

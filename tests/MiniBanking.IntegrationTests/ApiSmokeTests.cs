@@ -1,15 +1,14 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
+using MiniBanking.IntegrationTests.Infrastructure;
 
 namespace MiniBanking.IntegrationTests;
 
 /// <summary>
 /// Starts the real API in memory (no network port) and sends HTTP requests to it.
 /// </summary>
-public sealed class ApiSmokeTests(WebApplicationFactory<Program> factory)
-    : IClassFixture<WebApplicationFactory<Program>>
+public sealed class ApiSmokeTests(MiniBankingApiFactory factory)
 {
     private readonly HttpClient _client = factory.CreateClient();
 
