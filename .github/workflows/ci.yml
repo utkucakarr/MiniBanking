@@ -1,0 +1,36 @@
+# Continuous integration: build the solution and run every test (including the Testcontainers
+# integration tests) on a clean Linux machine for every push to main and every pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # adds a "Run workflow" button on GitHub
+
+# The workflow only reads the code; it never writes to the repository.
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest # Docker is preinstalled, so Testcontainers works
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v5
+
+      - name: Install the .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
