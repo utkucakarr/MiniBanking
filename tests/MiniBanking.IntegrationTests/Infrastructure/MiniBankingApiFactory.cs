@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Time.Testing;
 using MiniBanking.BuildingBlocks.Persistence;
 using Npgsql;
 using Respawn;
@@ -20,6 +24,9 @@ public sealed class MiniBankingApiFactory : WebApplicationFactory<Program>, IAsy
 
     private Respawner? _respawner;
 
+    /// <summary>A fixed clock, so date rules (e.g. "must be 18") are deterministic. It can only move forward.</summary>
+    public FakeTimeProvider TimeProvider { get; } = new(new DateTimeOffset(2026, 1, 15, 9, 0, 0, TimeSpan.Zero));
+
     public string ConnectionString => _postgres.GetConnectionString();
 
     public async ValueTask InitializeAsync()
@@ -36,6 +43,10 @@ public sealed class MiniBankingApiFactory : WebApplicationFactory<Program>, IAsy
         builder.UseSetting(
             $"ConnectionStrings:{PersistenceServiceCollectionExtensions.ConnectionStringName}",
             ConnectionString);
+
+        // ConfigureTestServices runs AFTER Program.cs registrations, so this replacement wins.
+        builder.ConfigureTestServices(services =>
+            services.Replace(ServiceDescriptor.Singleton<TimeProvider>(TimeProvider)));
     }
 
     /// <summary>Deletes all rows from every module table (keeps the schema and migration history).</summary>

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MiniBanking.Customers.Domain;
 
 namespace MiniBanking.Customers.Infrastructure;
 
@@ -9,6 +10,8 @@ namespace MiniBanking.Customers.Infrastructure;
 internal sealed class CustomersDbContext(DbContextOptions<CustomersDbContext> options) : DbContext(options)
 {
     public const string Schema = "customers";
+
+    public DbSet<Customer> Customers => Set<Customer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

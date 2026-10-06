@@ -15,4 +15,7 @@
     <Project Path="tests/MiniBanking.IntegrationTests/MiniBanking.IntegrationTests.csproj" />
     <Project Path="tests/MiniBanking.SharedKernel.Tests/MiniBanking.SharedKernel.Tests.csproj" />
   </Folder>
+  <Folder Name="/tests/Modules/">
+    <Project Path="tests/Modules/MiniBanking.Customers.Tests/MiniBanking.Customers.Tests.csproj" />
+  </Folder>
 </Solution>

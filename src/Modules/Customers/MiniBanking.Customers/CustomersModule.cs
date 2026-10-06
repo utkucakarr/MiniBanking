@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniBanking.BuildingBlocks.Modules;
 using MiniBanking.BuildingBlocks.Persistence;
+using MiniBanking.Customers.Features.GetCustomer;
+using MiniBanking.Customers.Features.RegisterCustomer;
 using MiniBanking.Customers.Infrastructure;
 
 namespace MiniBanking.Customers;
@@ -25,7 +27,8 @@ public sealed class CustomersModule : IModule
 
     public void MapEndpoints(IEndpointRouteBuilder group)
     {
-        // One line per slice, added together with the slice. Example:
-        // RegisterCustomerEndpoint.Map(group);
+        // One line per slice, added together with the slice.
+        RegisterCustomerEndpoint.Map(group);
+        GetCustomerEndpoint.Map(group);
     }
 }

@@ -7,6 +7,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Test projects may see the module's internal types. -->
+    <InternalsVisibleTo Include="MiniBanking.Customers.Tests" />
+    <InternalsVisibleTo Include="MiniBanking.IntegrationTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\MiniBanking.BuildingBlocks\MiniBanking.BuildingBlocks.csproj" />
     <ProjectReference Include="..\MiniBanking.Customers.Contracts\MiniBanking.Customers.Contracts.csproj" />
   </ItemGroup>

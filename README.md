@@ -96,6 +96,7 @@ MiniBanking.slnx
 │           ├── MiniBanking.Customers           # Domain/, Features/, Infrastructure/ (internal)
 │           └── MiniBanking.Customers.Contracts # the only part other modules may reference
 ├── tests/
+│   ├── Modules/MiniBanking.Customers.Tests   # domain unit tests (value objects, Customer aggregate)
 │   ├── MiniBanking.SharedKernel.Tests
 │   ├── MiniBanking.BuildingBlocks.Tests
 │   ├── MiniBanking.IntegrationTests          # HTTP → handler → real PostgreSQL (Testcontainers)
@@ -131,6 +132,19 @@ dotnet ef migrations add <Name> --project src/Modules/Customers/MiniBanking.Cust
 
 Then open **http://localhost:5080/scalar** for the interactive API documentation, or
 **http://localhost:5080/health** for the health check.
+`src/Bootstrapper/MiniBanking.Api/MiniBanking.Api.http` has ready-made requests for Visual Studio / VS Code.
+
+### API
+
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/api/v1/customers` | Register a retail customer (TCKN checksum, 18+ rule, KYC starts as `Pending`) → `201` + `Location` |
+| `GET` | `/api/v1/customers/{id}` | Read a customer → `200` / `404` |
+| `GET` | `/api/v1/reference/currencies` | Supported currencies |
+| `GET` | `/health` | Health check |
+
+Errors are RFC 9457 ProblemDetails with a stable `code`, e.g. `Customers.NationalIdAlreadyRegistered` (409)
+or `Customers.Underage` (422).
 
 ---
 
@@ -146,7 +160,7 @@ Then open **http://localhost:5080/scalar** for the interactive API documentation
 - [ ] **Phase 1 — Customers & Identity:** customer onboarding, KYC, JWT authentication
   - [x] Persistence foundation: PostgreSQL via Docker Compose, module `DbContext` with its own schema,
     transaction decorator, Testcontainers + Respawn integration tests, architecture tests
-  - [ ] Register a customer (first end-to-end slice): `Customer` aggregate, TCKN validation, `POST`/`GET` endpoints
+  - [x] Register a customer (first end-to-end slice): `Customer` aggregate, TCKN validation, `POST`/`GET` endpoints
   - [ ] CI (GitHub Actions)
   - [ ] KYC verification, Identity (JWT, refresh tokens)
 - [ ] **Phase 2 — Accounts:** IBAN, account lifecycle, holds, available vs ledger balance
